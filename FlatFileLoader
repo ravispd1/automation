@@ -1,0 +1,42 @@
+public class FlatFileLoader<T> {
+    public LoadData(String fileName, String className) {
+        FileReader fileReader = null;
+        List list;
+        try{
+            Class<T> cl = Class.forName(className);
+            T inst = cl.newInstance();
+            BeanListProcessor<T> rowProcessor = new BeanListProcessor(cl);
+            CsvParserSettings parserSettings = new CsvParserSettings();
+            parserSettings.setRowProcessor(rowProcessor);
+            parserSettings.setHeaderExtractionEnabled(true);
+            ((CsvFormat)parserSettings.getFormat()).setLineSeparator("\n");
+            ((CsvFormat)parserSettings.getFormat()).setDelimiter("|");
+            fileReader = new FileReader(fileName);
+            CsvParser parser = new CsvParser(parserSettings);
+            parser.parse(fileReader);
+            List<T> dataList = rowProcessor.getBeans();
+            if(dataList != null){
+                this.logger.info("Loaded %s %s from flat file : %s",);
+                Iterator iter1 = dataList.iterator();
+
+                while(iter1.hasNext()){
+                    T data = iter1.next();
+                }
+
+                list = dataList;
+            } catch (Exception ex){
+                throw new RuntimeException(ex);
+            } finally {
+                if(fileReader != null){
+                    try{
+                        fileReader.close();
+                    } catch (IOException ioEx) {
+                        throw new RuntimeException(ioEx);
+                    }
+                }
+            }
+        }
+
+        return list;
+    }
+}
